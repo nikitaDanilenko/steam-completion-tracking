@@ -4,3 +4,7 @@ use serde::Deserialize;
 pub struct Server {
   pub port: u16,
 }
+
+impl Server {
+  pub const PREFIX: &'static str = "SERVER";
+}

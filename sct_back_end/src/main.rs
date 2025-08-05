@@ -7,6 +7,7 @@ use axum::{
   routing::{get, post},
 };
 use config::version::Version;
+use dotenv::dotenv;
 use std::net::SocketAddr;
 
 fn create_router(application: Application) -> Router {
@@ -18,8 +19,11 @@ async fn main() {
   // Initialize tracing
   tracing_subscriber::fmt::init();
 
+  dotenv().ok();
+
   let application = Application::load().unwrap();
   let app = create_router(application.clone());
+
   // Run the server
   let addr = SocketAddr::from(([127, 0, 0, 1], application.server.port));
   let listener = tokio::net::TcpListener::bind(&addr).await.unwrap();

@@ -6,3 +6,7 @@ pub struct Version {
   pub minor: String,
   pub patch: String,
 }
+
+impl Version {
+  pub const PREFIX: &'static str = "VERSION";
+}
