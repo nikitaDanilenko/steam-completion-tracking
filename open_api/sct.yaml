@@ -1,0 +1,66 @@
+openapi: 3.0.4
+
+info:
+  title: Steam Completion Tracking API
+  description: Common API between the SCT back end and front end.
+  version: 0.0.1
+
+paths:
+  /steam-list:
+    get:
+      summary: Fetch latest game statistics from Steam
+      parameters:
+        - in: header
+          name: steam-token
+          schema:
+            type: string
+          required: true
+          description: |
+            The Steam token starting with 'steamLoginSecure'.
+            The token is available after a log-in to Steam,
+            and is set as a cookie.
+      responses:
+        200:
+          description: |
+            The full list of game progress statistics from Steam.
+            Steam's "/games" endpoint returns a web page,
+            which coincidentally contains the relevant information.
+            However, the data is in an inline JSON format.
+            The current endpoint extracts, and rearranges the relevant data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stats"
+
+components:
+  schemas:
+    Stats:
+      type: object
+      properties:
+        profileName:
+          type: string
+          description: The name of the Steam profile.
+        steamId:
+          type: string
+          description: The unique identifier for the Steam profile.
+        games:
+          type: array
+          items:
+            $ref: "#/components/schemas/Game"
+
+    Game:
+      type: object
+      properties:
+        appId:
+          type: integer
+          description: The unique identifier for the game (from Steam).
+        name:
+          type: string
+          description: The name of the game.
+        unlockedAchievements:
+          type: integer
+          description: The number of achievements unlocked in the game.
+        totalAchievements:
+          type: integer
+          description: The total number of achievements available in the game.
+
