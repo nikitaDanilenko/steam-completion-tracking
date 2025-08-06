@@ -1,5 +1,6 @@
 mod config;
-
+mod models;
+// todo: Restructure. The main.rs should only start the server, and have no own logic.
 use crate::config::application::Application;
 use axum::extract::State;
 use axum::{
@@ -8,6 +9,7 @@ use axum::{
 };
 use config::version::Version;
 use dotenv::dotenv;
+
 use std::net::SocketAddr;
 
 fn create_router(application: Application) -> Router {
