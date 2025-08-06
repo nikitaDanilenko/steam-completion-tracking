@@ -14,6 +14,7 @@ use dotenv::dotenv;
 use crate::outgoing::account_type::AccountType;
 use crate::outgoing::steam_client;
 use axum::http::HeaderMap;
+use scraper::{Html, Selector};
 use serde::Deserialize;
 use std::net::SocketAddr;
 use tracing::debug;
@@ -53,11 +54,27 @@ async fn root(State(application): State<Application>) -> Json<Version> {
   Json(application.version)
 }
 
+fn extract_list_of_games(html: &str) -> Option<String> {
+  // Parse the HTML document
+  let document = Html::parse_document(html);
+
+  // Create a selector for the element with id "gameslist_config".
+  // The element (template) with this id contains an attribute with the list of games.
+  let selector = Selector::parse("#gameslist_config").unwrap();
+
+  // Find the element and extract the attribute mentioned above
+  document
+    .select(&selector)
+    .next()
+    .and_then(|element| element.value().attr("data-profile-gameslist"))
+    .map(|data| data.replace("&quot;", "\"").to_string())
+}
+
 async fn steam_list(
   State(_application): State<Application>,
   Path(steam_list_parameters): Path<SteamListParameters>,
   headers: HeaderMap,
-) -> Json<String> {
+) -> Json<serde_json::Value> {
   // Todo: Handle gracefully
   let steam_token = headers.get("steam-token").unwrap();
   // Todo: Tidy up the unwrapping - it should be more consistent, and not panic.
@@ -67,5 +84,13 @@ async fn steam_list(
     steam_client::call_games_endpoint(&account_type, account_id, steam_token.to_str().unwrap())
       .await
       .unwrap_or(String::from("error"));
-  Json(response)
+  println!("Response: {}", &response);
+
+  // let html_content = std::fs::read_to_string("sample.html").unwrap();
+  let games =
+    extract_list_of_games(&response).unwrap_or_else(|| String::from("HTML extraction failed"));
+  // let games =
+  //   extract_list_of_games(&html_content).unwrap_or_else(|| String::from("HTML extraction failed"));
+  println!("Games: {}", games);
+  Json(serde_json::from_str::<serde_json::Value>(&games[..]).unwrap())
 }

@@ -24,6 +24,8 @@ pub async fn call_games_endpoint(
   let client = reqwest::Client::new();
   let response = client
     .get(&url)
+    // Todo: This may be unnecessary, because the cookie already needs to be taken from the existing cookies.
+    // It may be better to pass all cookies or at least avoid the reconstruction of the cookie name.
     .header(COOKIE, format!("steamLoginSecure={}", steam_token))
     .send()
     .await;
@@ -34,6 +36,7 @@ pub async fn call_games_endpoint(
       result
         .text()
         .await
+        // Todo: Handle better, this seems really haphazard
         .unwrap_or_else(|_| String::from("error")),
     ),
     Err(e) => Err(SteamError {
