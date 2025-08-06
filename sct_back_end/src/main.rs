@@ -84,11 +84,9 @@ async fn steam_list(
     steam_client::call_games_endpoint(&account_type, account_id, steam_token.to_str().unwrap())
       .await
       .unwrap_or(String::from("error"));
-  println!("Response: {}", &response);
 
   let games =
     extract_list_of_games(&response).unwrap_or_else(|| String::from("HTML extraction failed"));
 
-  println!("Games: {}", games);
   Json(serde_json::from_str::<serde_json::Value>(&games[..]).unwrap())
 }
