@@ -86,11 +86,9 @@ async fn steam_list(
       .unwrap_or(String::from("error"));
   println!("Response: {}", &response);
 
-  // let html_content = std::fs::read_to_string("sample.html").unwrap();
   let games =
     extract_list_of_games(&response).unwrap_or_else(|| String::from("HTML extraction failed"));
-  // let games =
-  //   extract_list_of_games(&html_content).unwrap_or_else(|| String::from("HTML extraction failed"));
+
   println!("Games: {}", games);
   Json(serde_json::from_str::<serde_json::Value>(&games[..]).unwrap())
 }
