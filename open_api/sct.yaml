@@ -6,7 +6,7 @@ info:
   version: 0.0.1
 
 paths:
-  /steam-list:
+  /steam-list/{account-type}/{account-id}:
     get:
       summary: Fetch latest game statistics from Steam
       operationId: steam-list
@@ -20,6 +20,27 @@ paths:
             The Steam token starting with 'steamLoginSecure'.
             The token is available after a log-in to Steam,
             and is set as a cookie.
+        - in: path
+          name: account-type
+          schema:
+            type: string
+            enum:
+              - id
+              - profile
+          required: true
+          description: |
+            Steam has two types of accounts, identified by 'id' (older profiles),
+            or 'profile' (newer profiles).
+        - in: path
+          name: account-id
+          schema:
+            type: string
+          required: true
+          description: |
+            The unique identifier for the Steam account.
+            If the account type is 'id', this is a string identifying the account.
+            If the account type is 'profile', this is the account's number.
+
       responses:
         200:
           description: |
