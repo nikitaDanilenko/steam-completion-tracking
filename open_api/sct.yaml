@@ -9,6 +9,7 @@ paths:
   /steam-list:
     get:
       summary: Fetch latest game statistics from Steam
+      operationId: steam-list
       parameters:
         - in: header
           name: steam-token
@@ -47,6 +48,10 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Game"
+      required:
+        - profileName
+        - steamId
+        - games
 
     Game:
       type: object
@@ -63,4 +68,9 @@ components:
         totalAchievements:
           type: integer
           description: The total number of achievements available in the game.
+      required:
+        - appId
+        - name
+        - unlockedAchievements
+        - totalAchievements
 
