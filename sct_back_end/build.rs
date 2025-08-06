@@ -56,9 +56,10 @@ fn generate_types_only(source_spec_path: &str, output_directory: &str) {
 
 fn main() {
   let sct_spec_path = "../open_api/sct.yaml";
+  let steam_spec_path = "../open_api/steam.yaml";
   println!("cargo:rerun-if-changed={}", sct_spec_path);
+  println!("cargo:rerun-if-changed={}", steam_spec_path);
 
   generate_types_only(sct_spec_path, "src/models/sct");
-
-  // Todo: Add Steam facing OpenAPI spec generation, too
+  generate_types_only(steam_spec_path, "src/models/steam");
 }
