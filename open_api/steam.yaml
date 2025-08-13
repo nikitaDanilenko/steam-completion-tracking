@@ -69,6 +69,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Game'
+        rgPerfectUnownedGames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+      required:
+        - achievement_progress
+        - rgGames
+        - rgPerfectUnownedGames
     AchievementProgress:
       type: object
       description: |
@@ -107,6 +115,7 @@ components:
         The 'name' field is the name of the game.
         There are many more fields in the response,
         but they are not relevant for the achievement progress.
+        The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUnownedGames'.
       properties:
         appid:
           type: integer
