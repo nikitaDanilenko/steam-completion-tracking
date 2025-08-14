@@ -100,13 +100,14 @@ The 'appid' field is the unique identifier for the game.
 The 'name' field is the name of the game.
 There are many more fields in the response,
 but they are not relevant for the achievement progress.
+The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUnownedGames'.
 */
     ///
     /// <details><summary>JSON schema</summary>
     ///
     /// ```json
     ///{
-    ///  "description": "Steam's representation of a game.\nThe 'appid' field is the unique identifier for the game.\nThe 'name' field is the name of the game.\nThere are many more fields in the response,\nbut they are not relevant for the achievement progress.\n",
+    ///  "description": "Steam's representation of a game.\nThe 'appid' field is the unique identifier for the game.\nThe 'name' field is the name of the game.\nThere are many more fields in the response,\nbut they are not relevant for the achievement progress.\nThe simplification allows to use the same schema for 'rgGames' and 'rgPerfectUnownedGames'.\n",
     ///  "type": "object",
     ///  "properties": {
     ///    "appid": {
@@ -150,6 +151,11 @@ but they are not relevant for the achievement progress.
     /// ```json
     ///{
     ///  "type": "object",
+    ///  "required": [
+    ///    "achievement_progress",
+    ///    "rgGames",
+    ///    "rgPerfectUnownedGames"
+    ///  ],
     ///  "properties": {
     ///    "achievement_progress": {
     ///      "type": "array",
@@ -162,6 +168,20 @@ but they are not relevant for the achievement progress.
     ///      "items": {
     ///        "$ref": "#/components/schemas/Game"
     ///      }
+    ///    },
+    ///    "rgPerfectUnownedGames": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/Game"
+    ///      }
+    ///    },
+    ///    "strProfileName": {
+    ///      "description": "The name of the Steam profile.",
+    ///      "type": "string"
+    ///    },
+    ///    "strSteamId": {
+    ///      "description": "The unique identifier for the Steam profile.",
+    ///      "type": "string"
     ///    }
     ///  }
     ///}
@@ -169,26 +189,29 @@ but they are not relevant for the achievement progress.
     /// </details>
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct GamesTable {
-        #[serde(default, skip_serializing_if = "::std::vec::Vec::is_empty")]
         pub achievement_progress: ::std::vec::Vec<AchievementProgress>,
-        #[serde(
-            rename = "rgGames",
-            default,
-            skip_serializing_if = "::std::vec::Vec::is_empty"
-        )]
+        #[serde(rename = "rgGames")]
         pub rg_games: ::std::vec::Vec<Game>,
+        #[serde(rename = "rgPerfectUnownedGames")]
+        pub rg_perfect_unowned_games: ::std::vec::Vec<Game>,
+        ///The name of the Steam profile.
+        #[serde(
+            rename = "strProfileName",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub str_profile_name: ::std::option::Option<::std::string::String>,
+        ///The unique identifier for the Steam profile.
+        #[serde(
+            rename = "strSteamId",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub str_steam_id: ::std::option::Option<::std::string::String>,
     }
     impl ::std::convert::From<&GamesTable> for GamesTable {
         fn from(value: &GamesTable) -> Self {
             value.clone()
-        }
-    }
-    impl ::std::default::Default for GamesTable {
-        fn default() -> Self {
-            Self {
-                achievement_progress: Default::default(),
-                rg_games: Default::default(),
-            }
         }
     }
 }
