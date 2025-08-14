@@ -73,6 +73,12 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Game'
+        strProfileName:
+          type: string
+          description: The name of the Steam profile.
+        strSteamId:
+          type: string
+          description: The unique identifier for the Steam profile.
       required:
         - achievement_progress
         - rgGames
