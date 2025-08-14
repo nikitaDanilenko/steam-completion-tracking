@@ -5,15 +5,20 @@ mod outgoing;
 use crate::config::application::Application;
 use axum::extract::{Path, State};
 use axum::{
-  Json, Router,
+  Json, Router, middleware,
   routing::{get, post},
 };
 use config::version::Version;
 use dotenv::dotenv;
 
+use crate::models::steam::generated::types::AccountInformation;
 use crate::outgoing::account_type::AccountType;
 use crate::outgoing::steam_client;
-use axum::http::HeaderMap;
+use crate::outgoing::steam_error::SteamError;
+use axum::body::Body;
+use axum::http::{Error, HeaderMap, Response};
+use futures::TryFutureExt;
+use reqwest::StatusCode;
 use scraper::{Html, Selector};
 use serde::Deserialize;
 use std::net::SocketAddr;
@@ -54,39 +59,31 @@ async fn root(State(application): State<Application>) -> Json<Version> {
   Json(application.version)
 }
 
-fn extract_list_of_games(html: &str) -> Option<String> {
-  // Parse the HTML document
-  let document = Html::parse_document(html);
-
-  // Create a selector for the element with id "gameslist_config".
-  // The element (template) with this id contains an attribute with the list of games.
-  let selector = Selector::parse("#gameslist_config").unwrap();
-
-  // Find the element and extract the attribute mentioned above
-  document
-    .select(&selector)
-    .next()
-    .and_then(|element| element.value().attr("data-profile-gameslist"))
-    .map(|data| data.replace("&quot;", "\"").to_string())
-}
-
+// Todo: This function is probably unnecessary.
 async fn steam_list(
   State(_application): State<Application>,
+  path_parameters: Path<SteamListParameters>,
+  headers: HeaderMap,
+) -> Result<Json<AccountInformation>, SteamError> {
+  let account_information = steam_list_internal(path_parameters, headers).await?;
+
+  Ok(Json(account_information))
+}
+
+async fn steam_list_internal(
   Path(steam_list_parameters): Path<SteamListParameters>,
   headers: HeaderMap,
-) -> Json<serde_json::Value> {
-  // Todo: Handle gracefully
-  let steam_token = headers.get("steam-token").unwrap();
-  // Todo: Tidy up the unwrapping - it should be more consistent, and not panic.
+) -> Result<AccountInformation, SteamError> {
+  let steam_token = headers
+    .get("steam-token")
+    .and_then(|value| value.to_str().ok())
+    .ok_or(SteamError::from_str("Missing steam token header"))?;
+
   let account_type = AccountType::from_string(&steam_list_parameters.account_type);
   let account_id = &steam_list_parameters.account_id;
-  let response =
-    steam_client::call_games_endpoint(&account_type, account_id, steam_token.to_str().unwrap())
-      .await
-      .unwrap_or(String::from("error"));
 
-  let games =
-    extract_list_of_games(&response).unwrap_or_else(|| String::from("HTML extraction failed"));
+  let account_information =
+    steam_client::call_games_endpoint(&account_type, account_id, steam_token).await?;
 
-  Json(serde_json::from_str::<serde_json::Value>(&games[..]).unwrap())
+  Ok(account_information)
 }
