@@ -58,7 +58,7 @@ paths:
 
 components:
   schemas:
-    GamesTable:
+    AccountInformation:
       type: object
       properties:
         achievement_progress:

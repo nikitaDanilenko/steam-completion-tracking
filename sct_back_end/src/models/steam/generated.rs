@@ -33,6 +33,76 @@ pub mod types {
             }
         }
     }
+    ///`AccountInformation`
+    ///
+    /// <details><summary>JSON schema</summary>
+    ///
+    /// ```json
+    ///{
+    ///  "type": "object",
+    ///  "required": [
+    ///    "achievement_progress",
+    ///    "rgGames",
+    ///    "rgPerfectUnownedGames"
+    ///  ],
+    ///  "properties": {
+    ///    "achievement_progress": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/AchievementProgress"
+    ///      }
+    ///    },
+    ///    "rgGames": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/Game"
+    ///      }
+    ///    },
+    ///    "rgPerfectUnownedGames": {
+    ///      "type": "array",
+    ///      "items": {
+    ///        "$ref": "#/components/schemas/Game"
+    ///      }
+    ///    },
+    ///    "strProfileName": {
+    ///      "description": "The name of the Steam profile.",
+    ///      "type": "string"
+    ///    },
+    ///    "strSteamId": {
+    ///      "description": "The unique identifier for the Steam profile.",
+    ///      "type": "string"
+    ///    }
+    ///  }
+    ///}
+    /// ```
+    /// </details>
+    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+    pub struct AccountInformation {
+        pub achievement_progress: ::std::vec::Vec<AchievementProgress>,
+        #[serde(rename = "rgGames")]
+        pub rg_games: ::std::vec::Vec<Game>,
+        #[serde(rename = "rgPerfectUnownedGames")]
+        pub rg_perfect_unowned_games: ::std::vec::Vec<Game>,
+        ///The name of the Steam profile.
+        #[serde(
+            rename = "strProfileName",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub str_profile_name: ::std::option::Option<::std::string::String>,
+        ///The unique identifier for the Steam profile.
+        #[serde(
+            rename = "strSteamId",
+            default,
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub str_steam_id: ::std::option::Option<::std::string::String>,
+    }
+    impl ::std::convert::From<&AccountInformation> for AccountInformation {
+        fn from(value: &AccountInformation) -> Self {
+            value.clone()
+        }
+    }
     /**Steam's representation of achievement progress.
 There are more fields in the response, but two are redundant ('percentage' and 'all_unlocked'),
 while 'cache_time' is not relevant for the achievement progress.
@@ -142,76 +212,6 @@ The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUno
                 appid: Default::default(),
                 name: Default::default(),
             }
-        }
-    }
-    ///`GamesTable`
-    ///
-    /// <details><summary>JSON schema</summary>
-    ///
-    /// ```json
-    ///{
-    ///  "type": "object",
-    ///  "required": [
-    ///    "achievement_progress",
-    ///    "rgGames",
-    ///    "rgPerfectUnownedGames"
-    ///  ],
-    ///  "properties": {
-    ///    "achievement_progress": {
-    ///      "type": "array",
-    ///      "items": {
-    ///        "$ref": "#/components/schemas/AchievementProgress"
-    ///      }
-    ///    },
-    ///    "rgGames": {
-    ///      "type": "array",
-    ///      "items": {
-    ///        "$ref": "#/components/schemas/Game"
-    ///      }
-    ///    },
-    ///    "rgPerfectUnownedGames": {
-    ///      "type": "array",
-    ///      "items": {
-    ///        "$ref": "#/components/schemas/Game"
-    ///      }
-    ///    },
-    ///    "strProfileName": {
-    ///      "description": "The name of the Steam profile.",
-    ///      "type": "string"
-    ///    },
-    ///    "strSteamId": {
-    ///      "description": "The unique identifier for the Steam profile.",
-    ///      "type": "string"
-    ///    }
-    ///  }
-    ///}
-    /// ```
-    /// </details>
-    #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-    pub struct GamesTable {
-        pub achievement_progress: ::std::vec::Vec<AchievementProgress>,
-        #[serde(rename = "rgGames")]
-        pub rg_games: ::std::vec::Vec<Game>,
-        #[serde(rename = "rgPerfectUnownedGames")]
-        pub rg_perfect_unowned_games: ::std::vec::Vec<Game>,
-        ///The name of the Steam profile.
-        #[serde(
-            rename = "strProfileName",
-            default,
-            skip_serializing_if = "::std::option::Option::is_none"
-        )]
-        pub str_profile_name: ::std::option::Option<::std::string::String>,
-        ///The unique identifier for the Steam profile.
-        #[serde(
-            rename = "strSteamId",
-            default,
-            skip_serializing_if = "::std::option::Option::is_none"
-        )]
-        pub str_steam_id: ::std::option::Option<::std::string::String>,
-    }
-    impl ::std::convert::From<&GamesTable> for GamesTable {
-        fn from(value: &GamesTable) -> Self {
-            value.clone()
         }
     }
 }
