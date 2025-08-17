@@ -5,11 +5,9 @@ mod router;
 
 use crate::config::application::Application;
 
-use config::version::Version;
 use dotenv::dotenv;
 
 use std::net::SocketAddr;
-use tracing::debug;
 
 #[tokio::main]
 async fn main() {
