@@ -12,3 +12,15 @@ impl AccountType {
     }
   }
 }
+
+// Todo: Is this sensible?
+impl Clone for AccountType {
+  fn clone(&self) -> Self {
+    match self {
+      AccountType::Profile => AccountType::Profile,
+      AccountType::Id => AccountType::Id,
+    }
+  }
+}
+
+impl Copy for AccountType {}
