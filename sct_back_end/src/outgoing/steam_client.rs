@@ -11,7 +11,7 @@ fn endpoint_by(account_type: &AccountType, account_id: &str) -> String {
   };
 
   let address = format!(
-    "https://steamcommunity.com/{}/{}/games/?tab=all",
+    "https://steamcommunity.com/{}/{}/games?tab=all",
     identifier, account_id
   );
   address
