@@ -1,6 +1,6 @@
 use crate::config::application::Application;
-use crate::models::sct::generated::types::Stats;
-use crate::models::steam::generated::types::AccountInformation;
+use crate::models::sct::generated::types::{Game, Stats};
+use crate::models::steam;
 use crate::outgoing::account_type::AccountType;
 use crate::outgoing::steam_client;
 use crate::outgoing::steam_error::SteamError;
@@ -8,6 +8,7 @@ use axum::Json;
 use axum::extract::{Path, State};
 use axum::http::HeaderMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
 pub struct SteamListParameters {
@@ -29,7 +30,7 @@ async fn fetch_account_information(
   State(_application): State<Application>,
   Path(steam_list_parameters): Path<SteamListParameters>,
   headers: HeaderMap,
-) -> Result<AccountInformation, SteamError> {
+) -> Result<steam::generated::types::AccountInformation, SteamError> {
   let steam_token = headers
     .get("steam-token")
     .and_then(|value| value.to_str().ok())
@@ -44,9 +45,41 @@ async fn fetch_account_information(
   Ok(account_information)
 }
 
-fn create_stats(account_information: AccountInformation) -> Stats {
+fn combine_games(account_information: &steam::generated::types::AccountInformation) -> Vec<Game> {
+  let games_by_id: HashMap<i64, &steam::generated::types::Game> = account_information
+    .rg_games
+    .iter()
+    .chain(account_information.rg_perfect_unowned_games.iter())
+    .map(|game| (game.appid, game))
+    .collect();
+  let games_by_achievement_progress: HashMap<i64, &steam::generated::types::AchievementProgress> =
+    account_information
+      .achievement_progress
+      .iter()
+      .filter_map(|progress| (progress.total > 0).then_some((progress.appid, progress)))
+      .collect();
+
+  let result: Vec<Game> = games_by_achievement_progress
+    .iter()
+    .filter_map(|(appid, progress)| {
+      progress.vetted.and_then(|v| {
+        games_by_id.get(appid).map(|game| Game {
+          app_id: *appid,
+          name: (*game.name).to_string(),
+          total_achievements: progress.total,
+          unlocked_achievements: progress.unlocked,
+          counting_for_steam_completion: v > 0,
+        })
+      })
+    })
+    .collect();
+
+  result
+}
+
+fn create_stats(account_information: steam::generated::types::AccountInformation) -> Stats {
   Stats {
-    games: Vec::new(),
+    games: combine_games(&account_information),
     profile_name: account_information
       .str_profile_name
       .unwrap_or(String::from("Missing Profile Name")),
