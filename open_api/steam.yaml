@@ -102,11 +102,11 @@ components:
         vetted:
           type: integer
           description: |
-            Whether or not the game counts towards the total completion percentage.
+            Whether the game counts towards the total completion percentage.
             The encoding seems to be:
             * 1 means "the game counts"
             * 0 means "the game does not count, but has achievements"
-            * null means "the game does not count and has no achievements"
+            * null means "the game has no achievements"
           nullable: true
       required:
         - appid
@@ -129,3 +129,6 @@ components:
         name:
           type: string
           description: The name of the game.
+      required:
+        - appid
+        - name

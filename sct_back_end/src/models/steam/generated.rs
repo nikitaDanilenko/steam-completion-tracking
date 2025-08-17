@@ -134,7 +134,7 @@ while 'cache_time' is not relevant for the achievement progress.
     ///      "type": "integer"
     ///    },
     ///    "vetted": {
-    ///      "description": "Whether or not the game counts towards the total completion percentage.\nThe encoding seems to be:\n* 1 means \"the game counts\"\n* 0 means \"the game does not count, but has achievements\"\n* null means \"the game does not count and has no achievements\"\n",
+    ///      "description": "Whether the game counts towards the total completion percentage.\nThe encoding seems to be:\n* 1 means \"the game counts\"\n* 0 means \"the game does not count, but has achievements\"\n* null means \"the game has no achievements\"\n",
     ///      "type": [
     ///        "integer",
     ///        "null"
@@ -152,11 +152,11 @@ while 'cache_time' is not relevant for the achievement progress.
         pub total: i64,
         ///The number of achievements unlocked in the game.
         pub unlocked: i64,
-        /**Whether or not the game counts towards the total completion percentage.
+        /**Whether the game counts towards the total completion percentage.
 The encoding seems to be:
 * 1 means "the game counts"
 * 0 means "the game does not count, but has achievements"
-* null means "the game does not count and has no achievements"
+* null means "the game has no achievements"
 */
         pub vetted: ::std::option::Option<i64>,
     }
@@ -179,6 +179,10 @@ The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUno
     ///{
     ///  "description": "Steam's representation of a game.\nThe 'appid' field is the unique identifier for the game.\nThe 'name' field is the name of the game.\nThere are many more fields in the response,\nbut they are not relevant for the achievement progress.\nThe simplification allows to use the same schema for 'rgGames' and 'rgPerfectUnownedGames'.\n",
     ///  "type": "object",
+    ///  "required": [
+    ///    "appid",
+    ///    "name"
+    ///  ],
     ///  "properties": {
     ///    "appid": {
     ///      "description": "The unique identifier for the game.",
@@ -195,23 +199,13 @@ The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUno
     #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
     pub struct Game {
         ///The unique identifier for the game.
-        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub appid: ::std::option::Option<i64>,
+        pub appid: i64,
         ///The name of the game.
-        #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-        pub name: ::std::option::Option<::std::string::String>,
+        pub name: ::std::string::String,
     }
     impl ::std::convert::From<&Game> for Game {
         fn from(value: &Game) -> Self {
             value.clone()
-        }
-    }
-    impl ::std::default::Default for Game {
-        fn default() -> Self {
-            Self {
-                appid: Default::default(),
-                name: Default::default(),
-            }
         }
     }
 }
