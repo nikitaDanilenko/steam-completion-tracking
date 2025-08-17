@@ -1,11 +1,15 @@
 use crate::config::application::Application;
+use crate::models::steam::generated::types::AccountInformation;
+use crate::outgoing::account_type::AccountType;
+use crate::outgoing::steam_client;
+use crate::outgoing::steam_error::SteamError;
 use axum::Json;
 use axum::extract::{Path, State};
 use axum::http::HeaderMap;
 use serde::Deserialize;
 
 #[derive(Deserialize, Debug)]
-struct SteamListParameters {
+pub struct SteamListParameters {
   account_type: String,
   account_id: String,
 }
