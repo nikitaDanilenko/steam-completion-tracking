@@ -89,9 +89,19 @@ components:
         totalAchievements:
           type: integer
           description: The total number of achievements available in the game.
+        countingForSteamCompletion:
+          type: boolean
+          description: |
+            Whether the game is counted towards Steam completion.
+            Unfortunately, Steam does not provide any information about games that are both
+            not counting, and have been removed from the store.
+            As a result, the games that are returned here are only suitable for the computation
+            of the Steam completion percentage, 
+            but not for a total completion percentage in the style of completionist.me or steamhunters.com.
       required:
         - appId
         - name
         - unlockedAchievements
         - totalAchievements
+        - countingForSteamCompletion
 
