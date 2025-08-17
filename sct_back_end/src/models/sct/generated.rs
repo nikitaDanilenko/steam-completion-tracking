@@ -42,6 +42,7 @@ pub mod types {
     ///  "type": "object",
     ///  "required": [
     ///    "appId",
+    ///    "countingForSteamCompletion",
     ///    "name",
     ///    "totalAchievements",
     ///    "unlockedAchievements"
@@ -50,6 +51,10 @@ pub mod types {
     ///    "appId": {
     ///      "description": "The unique identifier for the game (from Steam).",
     ///      "type": "integer"
+    ///    },
+    ///    "countingForSteamCompletion": {
+    ///      "description": "Whether the game is counted towards Steam completion.\nUnfortunately, Steam does not provide any information about games that are both\nnot counting, and have been removed from the store.\nAs a result, the games that are returned here are only suitable for the computation\nof the Steam completion percentage, \nbut not for a total completion percentage in the style of completionist.me or steamhunters.com.\n",
+    ///      "type": "boolean"
     ///    },
     ///    "name": {
     ///      "description": "The name of the game.",
@@ -72,6 +77,15 @@ pub mod types {
         ///The unique identifier for the game (from Steam).
         #[serde(rename = "appId")]
         pub app_id: i64,
+        /**Whether the game is counted towards Steam completion.
+Unfortunately, Steam does not provide any information about games that are both
+not counting, and have been removed from the store.
+As a result, the games that are returned here are only suitable for the computation
+of the Steam completion percentage,
+but not for a total completion percentage in the style of completionist.me or steamhunters.com.
+*/
+        #[serde(rename = "countingForSteamCompletion")]
+        pub counting_for_steam_completion: bool,
         ///The name of the game.
         pub name: ::std::string::String,
         ///The total number of achievements available in the game.
