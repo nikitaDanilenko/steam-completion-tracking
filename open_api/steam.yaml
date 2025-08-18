@@ -1,0 +1,134 @@
+openapi: 3.0.4
+
+info:
+  title: A slice of the real Steam API used by the browser
+  description: A subset of functionality that is available on Steam in the browser.
+  version: 0.0.1
+
+paths:
+  /{account-type}/{account-id}/games:
+    get:
+      summary: Fetch latest game statistics from Steam
+      operationId: games
+      parameters:
+        - in: cookie
+          name: steamLoginSecure
+          schema:
+            type: string
+          required: true
+          description: |
+            A cookie containing login information that is necessary to access the Steam account.
+        - in: path
+          name: account-type
+          schema:
+            type: string
+            enum:
+              - id
+              - profile
+          required: true
+          description: |
+            Steam has two types of accounts, identified by 'id' (older profiles),
+            or 'profile' (newer profiles).
+        - in: path
+          name: account-id
+          schema:
+            type: string
+          required: true
+          description: |
+            The unique identifier for the Steam account.
+            If the account type is 'id', this is a string identifying the account.
+            If the account type is 'profile', this is the account's number.
+      responses:
+        200:
+          description: |
+            An HTML page containing game statistics.
+            The relevant game information is available as inline JSON in one particular HTML element.
+          content:
+            text/html:
+              schema:
+                type: string
+        302:
+          description: |
+            Redirect to the Steam login page.
+            This is returned if the request is made without a valid Steam token.
+          content:
+            text/html:
+              schema:
+                type: string
+
+components:
+  schemas:
+    AccountInformation:
+      type: object
+      properties:
+        achievement_progress:
+          type: array
+          items:
+            $ref: '#/components/schemas/AchievementProgress'
+        rgGames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+        rgPerfectUnownedGames:
+          type: array
+          items:
+            $ref: '#/components/schemas/Game'
+        strProfileName:
+          type: string
+          description: The name of the Steam profile.
+        strSteamId:
+          type: string
+          description: The unique identifier for the Steam profile.
+      required:
+        - achievement_progress
+        - rgGames
+        - rgPerfectUnownedGames
+    AchievementProgress:
+      type: object
+      description: |
+        Steam's representation of achievement progress.
+        There are more fields in the response, but two are redundant ('percentage' and 'all_unlocked'),
+        while 'cache_time' is not relevant for the achievement progress.
+      properties:
+        appid:
+          type: integer
+          description: The unique identifier for the game.
+        total:
+          type: integer
+          description: The total number of achievements available in the game.
+        unlocked:
+          type: integer
+          description: The number of achievements unlocked in the game.
+        vetted:
+          type: integer
+          description: |
+            Whether the game counts towards the total completion percentage.
+            The encoding seems to be:
+            * 1 means "the game counts"
+            * 0 means "the game does not count, but has achievements"
+            * null means "the game has no achievements"
+          nullable: true
+      required:
+        - appid
+        - total
+        - unlocked
+        - vetted
+    Game:
+      type: object
+      description: |
+        Steam's representation of a game.
+        The 'appid' field is the unique identifier for the game.
+        The 'name' field is the name of the game.
+        There are many more fields in the response,
+        but they are not relevant for the achievement progress.
+        The simplification allows to use the same schema for 'rgGames' and 'rgPerfectUnownedGames'.
+      properties:
+        appid:
+          type: integer
+          description: The unique identifier for the game.
+        name:
+          type: string
+          description: The name of the game.
+      required:
+        - appid
+        - name

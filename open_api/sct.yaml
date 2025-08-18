@@ -1,0 +1,107 @@
+openapi: 3.0.4
+
+info:
+  title: Steam Completion Tracking API
+  description: Common API between the SCT back end and front end.
+  version: 0.0.1
+
+paths:
+  /steam-list/{account-type}/{account-id}:
+    get:
+      summary: Fetch latest game statistics from Steam
+      operationId: steam-list
+      parameters:
+        - in: header
+          name: steam-token
+          schema:
+            type: string
+          required: true
+          description: |
+            The Steam token starting with 'steamLoginSecure'.
+            The token is available after a log-in to Steam,
+            and is set as a cookie.
+        - in: path
+          name: account-type
+          schema:
+            type: string
+            enum:
+              - id
+              - profile
+          required: true
+          description: |
+            Steam has two types of accounts, identified by 'id' (older profiles),
+            or 'profile' (newer profiles).
+        - in: path
+          name: account-id
+          schema:
+            type: string
+          required: true
+          description: |
+            The unique identifier for the Steam account.
+            If the account type is 'id', this is a string identifying the account.
+            If the account type is 'profile', this is the account's number.
+
+      responses:
+        200:
+          description: |
+            The full list of game progress statistics from Steam.
+            Steam's "/games" endpoint returns a web page,
+            which coincidentally contains the relevant information.
+            However, the data is in an inline JSON format.
+            The current endpoint extracts, and rearranges the relevant data.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Stats"
+
+components:
+  schemas:
+    Stats:
+      type: object
+      properties:
+        profileName:
+          type: string
+          description: The name of the Steam profile.
+        steamId:
+          type: string
+          description: The unique identifier for the Steam profile.
+        games:
+          type: array
+          items:
+            $ref: "#/components/schemas/Game"
+      required:
+        - profileName
+        - steamId
+        - games
+
+    Game:
+      type: object
+      properties:
+        appId:
+          type: integer
+          description: The unique identifier for the game (from Steam).
+        name:
+          type: string
+          description: The name of the game.
+        unlockedAchievements:
+          type: integer
+          description: The number of achievements unlocked in the game.
+        totalAchievements:
+          type: integer
+          description: The total number of achievements available in the game.
+        countingForSteamCompletion:
+          type: boolean
+          description: |
+            Whether the game is counted towards Steam completion.
+            Unfortunately, Steam does not provide any information about games that are both
+            not counting, and have been removed from the store.
+            As a result, the games that are returned here are only suitable for the computation
+            of the Steam completion percentage, 
+            but not for a total completion percentage in the style of completionist.me or steamhunters.com.
+      required:
+        - appId
+        - name
+        - unlockedAchievements
+        - totalAchievements
+        - countingForSteamCompletion
+

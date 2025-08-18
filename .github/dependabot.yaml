@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "cargo"
+    directory: "/sct_back_end"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "npm"
+    directory: "/sct_front_end"
+    schedule:
+      interval: "weekly"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
