@@ -20,7 +20,7 @@ scraper = "0.23.1"
 [build-dependencies]
 prettyplease = "0.2.36"
 openapiv3 = "2.2.0"
-syn = "2.0.104"
+syn = "2.0.106"
 progenitor = "0.11.0"
 serde_yml = "0.0.12"
 reqwest = { version = "0.12", features = ["json", "stream"] }
