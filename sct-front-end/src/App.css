@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@300');
 
-body,
-button,
-input {
+* {
   font-family: 'Source Code Pro', monospace;
 }
 
@@ -37,6 +35,5 @@ button {
   padding-top: 10px;
   padding-bottom: 10px;
   margin-top: 5px;
-  display: block;
-  width: 100%;
+  display: inline-block;
 }
