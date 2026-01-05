@@ -9,12 +9,24 @@ const AccountTypeEnum = {
 
 type AccountType = (typeof AccountTypeEnum)[keyof typeof AccountTypeEnum]
 
+const me = '76561197986952100'
+
 function App() {
   const [accountType, setAccountType] = useState<AccountType>(
     AccountTypeEnum.Profiles
   )
-  const [accountId, setAccountId] = useState<string>('')
+  const [accountId, setAccountId] = useState<string>(me)
   const [steamToken, setSteamToken] = useState<string>('')
+
+  const storeToken = (token: string) => {
+    localStorage.setItem('sct-token', token)
+  }
+
+  const setAndStoreToken = (token: string) => {
+    setSteamToken(token)
+    storeToken(token)
+  }
+
   return (
     <main>
       <header>
@@ -23,7 +35,7 @@ function App() {
           Steam Cookie:
           <input type="text" id="steam-token" name="steam-token"
                  value={steamToken}
-                 onChange={e => setSteamToken(e.target.value)}/>
+                 onChange={e => setAndStoreToken(e.target.value)}/>
         </p>
         <p>
           <label htmlFor="account-type">Account Path:</label>

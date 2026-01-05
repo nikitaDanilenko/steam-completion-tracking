@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import {HashRouter, Route, Routes} from 'react-router-dom'
 import Profiles from "./paths/Profiles.tsx";
+import Login from "./pages/Login.tsx";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -12,6 +13,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path='/'>
           <Route index element={<App/>}/>
           <Route path='profiles/:accountId' element={<Profiles/>}/>
+          <Route path='login' element={<Login/>}/>
         </Route>
       </Routes>
     </HashRouter>
