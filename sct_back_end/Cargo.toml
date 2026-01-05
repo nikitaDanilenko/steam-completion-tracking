@@ -12,15 +12,15 @@ tower-http = { version = "0.6.6", features = ["cors", "trace"] }
 tracing-subscriber = "0.3.19"
 tracing = "0.1.41"
 dotenv = "0.15.0"
-config = "0.15.13"
+config = "0.15.18"
 futures = "0.3"
 reqwest = "0.12"
-scraper = "0.23.1"
+scraper = "0.24.0"
 
 [build-dependencies]
 prettyplease = "0.2.36"
 openapiv3 = "2.2.0"
-syn = "2.0.104"
+syn = "2.0.108"
 progenitor = "0.11.0"
 serde_yml = "0.0.12"
 reqwest = { version = "0.12", features = ["json", "stream"] }
