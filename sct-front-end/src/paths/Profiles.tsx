@@ -11,7 +11,7 @@ function Profiles() {
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch(
-        `${appConfig.api.url}steam-list/profiles/${accountId}`,
+        `${appConfig.api.url}/steam-list/profiles/${accountId}`,
         {
           headers: {
             'steam-token': steamToken
